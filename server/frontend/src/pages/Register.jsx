@@ -39,7 +39,7 @@ function Register() {
           email, 
           password,
         }, {
-          timeout: 20000 // 20 seconds timeout
+          timeout: 60000 // 20 seconds timeout
         });
         if(data.status === false){
           toast.error(data.msg, toastOptions);
