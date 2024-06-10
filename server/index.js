@@ -21,7 +21,6 @@ app.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 });
 
-console.log(process.env.MONGO_URL)
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
