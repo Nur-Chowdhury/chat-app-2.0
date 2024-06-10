@@ -30,26 +30,39 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("h");
     if(handleValidation()){
       const {password, name, username, email} = values;
       try {
-        const {data} = await axios.post(registerRoute, {
+        const { data } = await axios.post(registerRoute, {
           name, 
           username, 
           email, 
           password,
+        }, {
+          timeout: 20000 // 20 seconds timeout
         });
         if(data.status === false){
           toast.error(data.msg, toastOptions);
         }
         if(data.status === true){
           localStorage.setItem("app-user", JSON.stringify(data.user));
-          console.log("b");
           navigate("/chat");
         }
       } catch (error) {
-        toast.error("Request failed with status code 504. Please try again.", toastOptions);
+        if (error.response) {
+          // Server responded with a status code out of 2xx range
+          if (error.response.status === 504) {
+            toast.error("Gateway Timeout. Please try again later.", toastOptions);
+          } else {
+            toast.error(`Error: ${error.response.data.msg || error.message}`, toastOptions);
+          }
+        } else if (error.request) {
+          // Request was made but no response received
+          toast.error("No response from server. Please check your network connection and try again.", toastOptions);
+        } else {
+          // Something happened in setting up the request that triggered an error
+          toast.error(`Error: ${error.message}`, toastOptions);
+        }
       }
     }
   };
